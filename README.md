@@ -1,5 +1,10 @@
 # AB-SCL Studio · MS ROBOTIKA
 
+> **Ficha del proyecto · MS ROBOTIKA**  
+> **Área:** Conversor ST/SCL → KOP · **Estado:** v0.1 · laboratorio / conversión booleana comprobada  
+> **Evidencia:** [CI y pruebas](https://github.com/msrobotika/AB-SCL-Studio/actions) · [Capturas del programa](docs/screenshots/) · [Alcance y pendientes](docs/PROJECT_STATUS.md)  
+> **Límite:** No admite lógica secuencial ST general ni compila para PLC.
+
 **v0.1.0 · Analizador y conversor seguro ST/SCL → KOP · Español · MIT · 100 % local**
 
 Software original que convierte **un subconjunto booleano combinacional** de Structured Text en contactos y bobinas Ladder/KOP. Rechaza las construcciones que no pueda representar fielmente. No conecta a PLC ni genera código ejecutable industrial.

@@ -1,0 +1,27 @@
+name: "Informe de error"
+description: "Un fallo reproducible del software o de sus pruebas"
+title: "[bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: "No incluyas contraseñas, datos de producción, direcciones privadas ni registros de terceros."
+  - type: input
+    id: version
+    attributes:
+      label: "Versión y entorno"
+      placeholder: "Commit/versión; SO; navegador o hardware"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: "Pasos para reproducir"
+      description: "Describe el escenario mínimo y qué esperabas que ocurriera."
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: "Evidencia anonimizada"
+      description: "Pruebas, mensajes y capturas auténticas; elimina secretos."
