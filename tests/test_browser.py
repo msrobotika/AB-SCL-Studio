@@ -62,6 +62,31 @@ class BrowserTests(unittest.TestCase):
         self.assertEqual(self.p.locator('#metric-status').inner_text(),'RECHAZADA')
         self.p.locator('#reset-code').click()
         self.assertEqual(self.p.locator('#metric-status').inner_text(),'VERIFICADA')
+    def test_zero_and_restore_inputs_without_touching_source(self):
+        original=self.p.locator('#source').input_value()
+        self.p.locator('.io-btn',has_text='START').click()
+        self.p.locator('.io-btn',has_text='SENSOR').click()
+        self.assertEqual(self.p.locator('.io-btn.on').count(),2)
+        self.p.locator('#zero-inputs').click()
+        self.assertEqual(self.p.locator('.io-btn.on').count(),0)
+        self.assertEqual(self.p.locator('.rung').count(),3)
+        self.assertEqual(self.p.locator('#source').input_value(),original)
+        self.p.locator('#default-inputs').click()
+        self.assertEqual(self.p.locator('.io-btn.on').count(),2)
+        self.assertIn('valores declarados',self.p.locator('#notice').inner_text())
+
+    def test_restore_example_can_undo_previous_code(self):
+        source=self.p.locator('#source')
+        initial=source.input_value()
+        modified=initial.replace('// Demostración','// PROYECTO DEL USUARIO')
+        source.fill(modified)
+        self.p.locator('#reset-code').click()
+        self.assertEqual(source.input_value(),initial)
+        self.assertFalse(self.p.locator('#undo-demo').is_hidden())
+        self.p.locator('#undo-demo').click()
+        self.assertEqual(source.input_value(),modified)
+        self.assertTrue(self.p.locator('#undo-demo').is_hidden())
+
     def test_kop_json_download(self):
         with self.p.expect_download() as item:
             self.p.locator('#export-kop').click()

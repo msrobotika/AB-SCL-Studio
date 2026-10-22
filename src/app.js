@@ -2,7 +2,7 @@
 /* SPDX-License-Identifier: MIT — Copyright (c) 2026 MS ROBOTIKA. */
 (()=>{'use strict';
 const core=window.ABSclCore,$=id=>document.getElementById(id);
-let data=null,signal=Object.create(null);
+let data=null,signal=Object.create(null),previousSource=null;
 const asText=(tag,value,cls)=>{const n=document.createElement(tag);if(value!==undefined)n.textContent=String(value);if(cls)n.className=cls;return n;};
 function notice(text,bad=false){$('notice').textContent=text;$('notice').classList.toggle('error',bad);}
 const countLines=()=>{const content=$('source').value;const lines=content.split('\n').length;$('line-numbers').textContent=Array.from({length:lines},(_,i)=>i+1).join('\n');$('source-info').textContent=`${lines} líneas · ${content.length} caracteres`;};
@@ -38,7 +38,10 @@ function init(){
  $('source').addEventListener('scroll',()=>{$('line-numbers').scrollTop=$('source').scrollTop;});
  $('source').addEventListener('keydown',e=>{if(e.key==='Tab'){e.preventDefault();const t=e.target,start=t.selectionStart,end=t.selectionEnd;t.setRangeText('  ',start,end,'end');t.dispatchEvent(new Event('input'));}});
  $('convert').addEventListener('click',analyze);
- $('reset-code').addEventListener('click',()=>{$('source').value=core.sample();countLines();analyze();});
+ $('reset-code').addEventListener('click',()=>{const sample=core.sample();previousSource=$('source').value===sample?null:$('source').value;$('undo-demo').hidden=previousSource===null;$('source').value=sample;countLines();analyze();notice('Ejemplo restaurado. Puedes recuperar tu borrador anterior cuando quieras.');});
+ $('undo-demo').addEventListener('click',()=>{if(previousSource===null)return;$('source').value=previousSource;previousSource=null;$('undo-demo').hidden=true;countLines();analyze();notice('Borrador anterior recuperado.');});
+ $('zero-inputs').addEventListener('click',()=>{if(!data)return notice('Analiza un SCL válido antes de reiniciar la simulación.',true);for(const name of data.ast.inputNames)signal[name]=false;renderInputs();displayValues();notice('Entradas virtuales puestas a cero. Código y redes KOP conservados.');});
+ $('default-inputs').addEventListener('click',()=>{if(!data)return notice('Analiza un SCL válido antes de restaurar las entradas.',true);signal=Object.assign(Object.create(null),data.ast.declarations.inputs);renderInputs();displayValues();notice('Entradas restauradas a los valores declarados en VAR_INPUT.');});
  $('import-source').addEventListener('change',async e=>{try{const f=e.target.files?.[0];if(!f)return;if(f.size>50000)throw Error('Máximo 50 KB para código fuente.');$('source').value=await f.text();countLines();analyze();}catch(err){notice('Importación rechazada: '+err.message,true);}finally{e.target.value='';}});
  $('export-source').addEventListener('click',()=>download('AB-SCL-Studio-proyecto.scl',$('source').value,'text/plain;charset=utf-8'));
  $('export-kop').addEventListener('click',()=>{if(needsData())download('AB-SCL-para-AB-KOP-Studio.json',JSON.stringify(data.model,null,2),'application/json;charset=utf-8');});

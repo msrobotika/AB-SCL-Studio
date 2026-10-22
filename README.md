@@ -35,6 +35,10 @@ Las imágenes las genera el [workflow de pruebas](.github/workflows/ci.yml) al *
 
 ![AB-SCL Studio en móvil](docs/screenshots/scl-movil.png)
 
+## Experiencia de usuario y puesta a cero
+
+El banco digital incluye **Poner entradas a cero** (todas las entradas OFF) y **Restaurar valores iniciales** (los definidos en `VAR_INPUT`). Estas operaciones actualizan las salidas y la visualización **sin modificar el código fuente ni exportaciones**. El botón **Restaurar ejemplo** ofrece **Recuperar borrador** para deshacer esa sustitución en la sesión actual. Una conversión rechazada no permite exportar KOP.
+
 ## Funciones de v0.1
 
 - Editor e importación de archivos `.scl`, `.st`, `.txt`.
