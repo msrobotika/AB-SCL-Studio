@@ -130,8 +130,7 @@ function verify(ast,model){
  return {status:'VERIFIED',cases:total,outputs:ast.outputNames.length,method:'Exhaustivo para las 2^N combinaciones de entradas BOOL; semántica combinacional restringida.'};
 }
 function analyze(source){const ast=parse(source),compiled=convert(ast);return {ast,...compiled};}
-function example(){return `PROGRAM DemoCinta\nVAR_INPUT\n  START : BOOL;\n  STOP_OK : BOOL := TRUE;\n  ESTOP_OK : BOOL := TRUE;\n  SENSOR : BOOL;\nEND_VAR\nVAR_OUTPUT\n  MOTOR : BOOL;\n  PILOTO : BOOL;\n  ALARMA : BOOL;\nEND_VAR\n\n// Lógica combinacional didáctica, sin autoenclavamiento.\nMOTOR := START AND STOP_OK AND ESTOP_OK;\nIF SENSOR AND MOTOR_OK THEN\n  PILOTO := TRUE;\nELSE\n  PILOTO := FALSE;\nEND_IF;\nALARMA := NOT ESTOP_OK;\nEND_PROGRAM`;
-}
+function example(){return sample();}
 function sample(){return `PROGRAM DemoCinta\nVAR_INPUT\n  START : BOOL;\n  STOP_OK : BOOL := TRUE;\n  ESTOP_OK : BOOL := TRUE;\n  SENSOR : BOOL;\nEND_VAR\nVAR_OUTPUT\n  MOTOR : BOOL;\n  PILOTO : BOOL;\n  ALARMA : BOOL;\nEND_VAR\n\n// Demostración sin retenciones ni temporizadores físicos.\nMOTOR := START AND STOP_OK AND ESTOP_OK;\nIF MOTOR_LOGIC AND SENSOR THEN\n  PILOTO := TRUE;\nELSE\n  PILOTO := FALSE;\nEND_IF;\nALARMA := NOT ESTOP_OK;\nEND_PROGRAM`.replace('MOTOR_LOGIC','START AND STOP_OK AND ESTOP_OK');}
 return Object.freeze({lex,parse,evaluate,convert,dnf,verify,analyze,sample,example,evaluateKop});
 });
