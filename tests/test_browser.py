@@ -66,7 +66,7 @@ class BrowserTests(unittest.TestCase):
         original=self.p.locator('#source').input_value()
         self.p.locator('.io-btn',has_text='START').click()
         self.p.locator('.io-btn',has_text='SENSOR').click()
-        self.assertEqual(self.p.locator('.io-btn.on').count(),2)
+        self.assertEqual(self.p.locator('.io-btn.on').count(),4)
         self.p.locator('#zero-inputs').click()
         self.assertEqual(self.p.locator('.io-btn.on').count(),0)
         self.assertEqual(self.p.locator('.rung').count(),3)
