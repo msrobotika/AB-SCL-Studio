@@ -1,0 +1,74 @@
+name: AB-SCL Studio · tests y capturas reales
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'index.html'
+      - 'AB-SCL-Studio-PORTABLE.html'
+      - 'tests/**'
+      - 'tools/**'
+      - '.github/workflows/ci.yml'
+  workflow_dispatch:
+concurrency:
+  group: ab-scl-studio-main-screenshots
+  cancel-in-progress: false
+permissions:
+  contents: write
+jobs:
+  verify-and-capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout AB-SCL Studio
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Checkout AB-KOP Studio (real integration engine)
+        uses: actions/checkout@v4
+        with:
+          repository: msrobotika/AB-KOP-Studio-v0.1
+          path: _integration/ab-kop-studio
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Validar JavaScript y equivalencia de ST/KOP
+        run: |
+          node --check src/core.js
+          node --check src/app.js
+          node --test tests/*.test.js
+      - name: Reconstruir HTML portátil desde fuentes
+        run: python tools/build_portable.py
+      - name: Preparar Playwright y navegador Chromium
+        run: |
+          python -m pip install 'playwright>=1.55,<2'
+          if command -v google-chrome >/dev/null 2>&1; then
+            google-chrome --version
+          elif command -v chromium >/dev/null 2>&1; then
+            chromium --version
+          else
+            python -m playwright install --with-deps chromium
+          fi
+      - name: Ejecutar UI real y generar cuatro PNG
+        run: python -m unittest discover -s tests -p test_browser.py -v
+      - name: Guardar capturas auditables
+        uses: actions/upload-artifact@v4
+        with:
+          name: AB-SCL-Studio-v0.1-capturas-reales
+          path: docs/screenshots/scl-*.png
+          if-no-files-found: error
+      - name: Publicar capturas de Chromium en main
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/screenshots/scl-*.png
+          if ! git diff --cached --quiet; then
+            git commit -m 'docs(scl): publish real verified Chromium screenshots'
+            git fetch origin main
+            git rebase origin/main
+            git push origin HEAD:main
+          fi
