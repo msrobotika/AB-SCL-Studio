@@ -79,7 +79,7 @@ class BrowserTests(unittest.TestCase):
             self.assertTrue(item.value.suggested_filename.endswith(extension))
     def test_report_html_escapes_comment(self):
         self.p.locator('#source').fill(self.p.locator('#source').input_value().replace(
-           '// Demostración','(* <script>alert(1)</script> *)\\n// Demostración'))
+           '// Demostración','(* <script>alert(1)</script> *)\n// Demostración'))
         self.p.locator('#convert').click()
         self.assertEqual(self.p.locator('#metric-status').inner_text(),'VERIFICADA')
         with self.p.expect_download() as item:
